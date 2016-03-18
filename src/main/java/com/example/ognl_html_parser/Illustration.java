@@ -11,7 +11,7 @@ import java.util.*;
  * @date 2016/3/9
  */
 public class Illustration {
-    public static void main(String[] args) throws Exception{
+    public void biquge() throws Exception{
         Document doc = Jsoup.connect("http://www.biquge.la/book/14/").get();
         BookInfo book = new BookInfo();
         String bookInfoExpression = "#maininfo=#doc.select(\"#maininfo\"),#book.name=#maininfo.select('#info h1').text(),#book.author=substringFromIndexOf(#maininfo.select('#info p:nth-child(2)').text(), '：'),#book.lastUpdate=substringFromIndexOf(#maininfo.select('#info p:nth-child(4)').text(), '：'),#_lastChapterA=#maininfo.select('#info p:nth-child(5) a'),#book.newestChapterId=substringToIndexOf(#_lastChapterA.attr(\"href\"), '.'),#book.newestChapterName=#_lastChapterA.text(),#book.description=#maininfo.select(\"#intro\").text(),#book.coverUrl=#doc.select(\"#fmimg>img\").attr('src')";
@@ -34,5 +34,45 @@ public class Illustration {
         String searchExpression = "substring(#doc.select(\".result-list>.result-item:has(.result-game-item-info-tag>span:nth-child(2):matches(\\\\s*\" + #author + \"\\\\s*)):has(.result-item-title>a[title=\" + #name + \"])\").select(\"a[cpos=title]\").attr('href'), '(\\\\d+)')";
         Long value = (Long)Ognl.getValue(searchExpression, context, root, Long.class);
         System.out.println(value);
+    }
+
+    public static void wxguan() throws Exception{
+        Document doc = Jsoup.connect("http://www.wxguan.com/wenzhang/0/977/").get();
+//        BookInfo book = new BookInfo();
+//        String bookInfoExpression = "#maininfo=#doc.select(\"#maininfo\"),#book.name=#maininfo.select('#info h1').text(),#book.author=substringFromIndexOf(#maininfo.select('#info p:nth-child(2)').text(), '：'),#book.lastUpdate=substringFromIndexOf(#maininfo.select('#info p:nth-child(4)').text(), '：'),#_lastChapterA=#maininfo.select('#info p:nth-child(5) a'),#book.newestChapterId=substringToIndexOf(#_lastChapterA.attr(\"href\"), '.'),#book.newestChapterName=#_lastChapterA.text(),#book.description=#maininfo.select(\"#intro\").text(),#book.coverUrl=#doc.select(\"#fmimg>img\").attr('src')";
+        OgnlContext context = new OgnlContext();
+        context.put("doc", doc);
+//        context.put("book", book);
+        ParserRoot root = new ParserRoot();
+        Ognl.setTypeConverter(context, new EnhancedTypeConverter());
+//        Ognl.getValue(bookInfoExpression, context, root);
+//        System.out.println(book);
+        String chapterListExpression = "#doc.select(\"#list\").select(\"dt,dd>a\").{#item=#this,#item.tagName()=='dt'?(#root.chapterColumn(substringFromIndexOf(#item.text(), '《择天记》'))):(#root.chapter(substring(#item.attr('href'), '/(\\\\d+).html'), #item.text()))}";
+        List<ChapterInfo> chapters = (List<ChapterInfo>)Ognl.getValue(chapterListExpression, context, root);
+        String columnName = null;
+        for(ChapterInfo c : chapters){
+            if(c.isColumn()){
+                columnName = c.getName();
+                continue;
+            }
+            if(columnName != null){
+                c.setName(columnName + " " + c.getName());
+            }
+            System.out.println(c);
+        }
+//        System.out.println(chapters);
+//        String name = "完美世界";
+//        doc = Jsoup.connect("http://so.biquge.la/cse/search?s=7138806708853866527&q=" + name).get();
+//        context.put("doc", doc);
+//        context.put("name", name);
+//        context.put("author", "辰东");
+////        String searchExpression = "substring(#doc.select(\".result-list>.result-item:has(.result-game-item-info-tag>span:nth-child(2):matches(\\\\s*\" + \"辰东\" + \"\\\\s*)):has(.result-item-title>a[title=\" + \"完美世界\" + \"])\").select(\"a[cpos=title]\").attr('href'), '(\\\\d+)')";
+//        String searchExpression = "substring(#doc.select(\".result-list>.result-item:has(.result-game-item-info-tag>span:nth-child(2):matches(\\\\s*\" + #author + \"\\\\s*)):has(.result-item-title>a[title=\" + #name + \"])\").select(\"a[cpos=title]\").attr('href'), '(\\\\d+)')";
+//        Long value = (Long)Ognl.getValue(searchExpression, context, root, Long.class);
+//        System.out.println(value);
+    }
+
+    public static void main(String[] args) throws Exception{
+        wxguan();
     }
 }

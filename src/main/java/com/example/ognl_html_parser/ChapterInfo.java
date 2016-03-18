@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.*;
 public class ChapterInfo {
     private Long originId;
     private String name;
+    private boolean column;
 
     public Long getOriginId() {
         return originId;
@@ -24,6 +25,14 @@ public class ChapterInfo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isColumn() {
+        return column;
+    }
+
+    public void setColumn(boolean column) {
+        this.column = column;
     }
 
     @Override

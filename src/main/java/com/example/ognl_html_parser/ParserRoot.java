@@ -41,11 +41,35 @@ public class ParserRoot {
         return chapter(Long.valueOf(originId), name);
     }
 
+    public ChapterInfo chapterColumn(String name){
+        ChapterInfo chapterInfo = new ChapterInfo();
+        chapterInfo.setName(getValidColumnName(name));
+        chapterInfo.setColumn(true);
+        return chapterInfo;
+    }
+
     public ChapterInfo chapter(Long originId, String name){
         ChapterInfo chapterInfo = new ChapterInfo();
         chapterInfo.setOriginId(originId);
         chapterInfo.setName(name);
         return chapterInfo;
+    }
+
+    public String getValidColumnName(String columnName){
+        if(columnName == null){
+            return null;
+        }
+        if(columnName.endsWith("VIP卷")){
+            columnName = substringToIndexOf(columnName, "VIP卷");
+        }
+        if(columnName.endsWith("正文")){
+            columnName = substringToIndexOf(columnName, "正文");
+        }
+        columnName = columnName.trim();
+        if(columnName.equals("")){
+            return null;
+        }
+        return  columnName;
     }
 
     public static void main(String[] args){
